@@ -1,0 +1,35 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.2.5'
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'com.research'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    sourceCompatibility = '17'
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'ch.qos.logback:logback-classic:1.4.8'
+    implementation 'net.logstash.logback:logstash-logback-encoder:7.3'
+    implementation 'org.springframework.kafka:spring-kafka:3.0.9'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.14.2'
+    compileOnly 'org.projectlombok:lombok:1.18.32'
+    annotationProcessor 'org.projectlombok:lombok:1.18.32'
+
+    implementation 'com.research:grpc-definitions:0.0.2-SNAPSHOT'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package com.research.grpc;
+
+option java_multiple_files = true;
+option java_package = "com.research.grpc";
+
+service InventoryService {
+  rpc checkInventory(InventoryMessage) returns (InventoryMessage) {};
+}
+
+message InventoryMessage {
+  string orderStatus = 1;
+  string inventoryStatus = 2;
+  string paymentStatus = 3;
+   string finalStatus = 4;
+   string OrderToInventorySendTime = 5;
+   string OrderToInventoryReceivedTime = 6;
+   string OrderToPaymentSendTime = 7;
+   string OrderToPaymentReceivedTime = 8;
+   string InventoryToOrderSendTime = 9;
+   string InventoryToOrderReceivedTime = 10;
+   string PaymentToOrderSendTime = 11;
+   string PaymentToOrderReceivedTime = 12;
+  string orderReference = 13;
+
+}

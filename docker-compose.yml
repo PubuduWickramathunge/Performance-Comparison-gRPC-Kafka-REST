@@ -1,0 +1,180 @@
+version: '3.8'
+
+services:
+
+  te01-order-service:
+    image: te01-order-service:latest
+    ports:
+      - "9050:9050"
+    environment:
+      SERVER_PORT: 9050
+      SPRING_APPLICATION_NAME: te01-order-service
+      RESEARCH_TE01_INVENTORY_SERVICE_GRPC_CLIENT_HOST: te01-inventory-service
+      RESEARCH_TE01_INVENTORY_SERVICE_GRPC_CLIENT_PORT: 9051
+      RESEARCH_TE01_PAYMENT_SERVICE_GRPC_CLIENT_HOST: te01-payment-service
+      RESEARCH_TE01_PAYMENT_SERVICE_GRPC_CLIENT_PORT: 9052
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/testenv01
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      - postgres
+
+  te01-payment-service:
+    image: te01-payment-service:latest
+    ports:
+      - "9052:9052"
+    environment:
+      GRPC_PORT: 9052
+      SPRING_APPLICATION_NAME: te01-payment-service
+
+  te01-inventory-service:
+    image: te01-inventory-service:latest
+    ports:
+      - "9051:9051"
+    environment:
+      GRPC_PORT: 9051
+      SPRING_APPLICATION_NAME: te01-inventory-service
+
+  te02-order-service:
+    image: te02-order-service:latest
+    ports:
+      - "9053:9053"
+    environment:
+      SERVER_PORT: 9053
+      SPRING_APPLICATION_NAME: te02-order-service
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/testenv02
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      - kafka
+      - postgres
+
+  te02-payment-service:
+    image: te02-payment-service:latest
+    ports:
+      - "9055:9055"
+    environment:
+      GRPC_PORT: 9055
+      SPRING_APPLICATION_NAME: te02-payment-service
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      - kafka
+
+  te02-inventory-service:
+    image: te02-inventory-service:latest
+    ports:
+      - "9054:9054"
+    environment:
+      GRPC_PORT: 9054
+      SPRING_APPLICATION_NAME: te02-inventory-service
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      - kafka
+
+  te03-order-service:
+    image: te03-order-service:latest
+    ports:
+      - "9056:9056"
+    environment:
+      SERVER_PORT: 9056
+      SPRING_APPLICATION_NAME: te03-order-service
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/testenv03
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      - kafka
+      - postgres
+
+  te03-payment-service:
+    image: te03-payment-service:latest
+    ports:
+      - "9058:9058"
+    environment:
+      GRPC_PORT: 9058
+      SPRING_APPLICATION_NAME: te03-payment-service
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      - kafka
+
+  te03-inventory-service:
+    image: te03-inventory-service:latest
+    ports:
+      - "9057:9057"
+    environment:
+      GRPC_PORT: 9057
+      SPRING_APPLICATION_NAME: te03-inventory-service
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      - kafka
+      
+  te04-order-service:
+    image: te04-order-service:latest
+    ports:
+      - "9059:9059"
+    environment:
+      SERVER_PORT: 9059
+      SPRING_APPLICATION_NAME: te04-order-service
+      PAYMENT_SERVICE_HOST: te04-payment-service  
+      INVENTORY_SERVICE_HOST: te04-inventory-service
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/testenv04
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      - postgres
+
+  te04-payment-service:
+    image: te04-payment-service:latest
+    ports:
+      - "9061:9061"
+    environment:
+      SERVER_PORT: 9061
+      SPRING_APPLICATION_NAME: te04-payment-service
+
+  te04-inventory-service:
+    image: te04-inventory-service:latest
+    ports:
+      - "9060:9060"
+    environment:
+      SERVER_PORT: 9060
+      SPRING_APPLICATION_NAME: te04-inventory-service
+
+  kafka:
+    image: wurstmeister/kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_LISTENERS: PLAINTEXT://:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    depends_on:
+      - zookeeper
+
+  zookeeper:
+    image: wurstmeister/zookeeper
+    ports:
+      - "2181:2181"
+
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: testenv01
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB_2: testenv02
+      POSTGRES_DB_3: testenv03
+    ports:
+      - "5433:5432"
+    
+
+
